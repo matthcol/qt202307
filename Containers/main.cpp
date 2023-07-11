@@ -7,6 +7,10 @@
 #include <QtMath>
 #include <QDate>
 
+bool isNegative(qreal v){
+    return v < 0.0;
+}
+
 // Containers: QList, QHash, QMap, QQueue, QSet
 void playWithContainersOfReals() {
     QList<qreal> emptyList;
@@ -53,6 +57,40 @@ void playWithContainersOfReals() {
         return qFabs(v - 0.3) < 1E-4;
     });
     qDebug() << temperatures;
+
+    qreal valueToDelete = 12.0;
+    qreal precision = 0.5;
+    temperatures.removeIf(
+        [valueToDelete, precision](qreal v){
+            return qFabs(v - valueToDelete) < precision;
+        }
+    );
+    qDebug() << temperatures;
+
+    temperatures.removeIf(&isNegative);
+    qDebug() << temperatures;
+
+    // iterations
+    // QT foreach
+    qDebug() << "Temperatures iteration (QT)";
+    foreach(qreal t, temperatures) {
+        qDebug().noquote() << "\t-" << t;
+    }
+    // C+11 foreach
+    qDebug() << "Temperatures iteration (C++11)";
+    for (qreal t: temperatures) {
+        qDebug().noquote() << "\t*" << t;
+    }
+    // explicit iterator
+    qDebug() << "Temperatures iteration (explicit iterator)";
+    QList<qreal>::iterator it = temperatures.begin();
+    QList<qreal>::iterator end = temperatures.end();
+    while (it != end) {
+        qreal t = *it;
+        qDebug().noquote() << "\t#" << t;
+        ++it;
+    }
+
 }
 
 int main(int argc, char *argv[])
