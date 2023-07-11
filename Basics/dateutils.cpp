@@ -10,6 +10,6 @@ QDate operator+(const QDate& lhs, quint64 rhs) {
 QDate& operator+=(QDate& lhs, quint64 rhs) {
     // TODO: increment lhs whith rhs days
     QDate tmpDate = lhs.addDays(rhs);
-    lhs.setDate(tmpDate.year(), tmpDate.month(), tmpDate.days());
+    lhs.setDate(tmpDate.year(), tmpDate.month(), tmpDate.day());
     return lhs;
 }

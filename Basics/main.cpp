@@ -2,12 +2,15 @@
 #include <QDebug>
 #include <QString>
 #include <QDate>
+#include <QVariant>
 
-//#include "dateutils.h"
+#include "dateutils.h"
 
 // links
 // primitives types: https://doc.qt.io/qt-6/qttypes.html
-// strings: https://doc.qt.io/qt-6/qstring.html
+// QString: https://doc.qt.io/qt-6/qstring.html
+// QDate: https://doc.qt.io/qt-6/qdate.html
+// QVariant:
 
 
 QString welcomeMessage(){
@@ -24,12 +27,14 @@ QString welcomeMessage(){
 }
 
 bool isShortString(const QString& value){
-    quint64 threshold = 10;
-//    value.clear();
+    qsizetype threshold = 10;
+    // value.clear(); // forbidden with const
     return value.length() < threshold;
 }
 
 void playWithString(){
+    qDebug().noquote() << "** PLAY WITH STRINGS **";
+
     QString city = u8"東京";
     const QString country("Japan");
 
@@ -55,19 +60,26 @@ void playWithString(){
     qDebug() << country[0];
 //    country[0] = 'Z'; // forbidden because data is const
     city[0] = 'Z'; // ok string is mutable
+    qDebug() << city;
+    qDebug();
 }
 
 void playWithIntegers(){
+    qDebug().noquote() << "** PLAY WITH INTEGERS **";
+
     quint8 color = 255;
     quint32 count = 4000000000;
     quint64 bigCount = 18000000000000000000LL;
     qint32 solde = -2000000000;
+
     qDebug() << color << count << bigCount << solde;
+
     // numeric operators
     solde++; // ++solde, --solde, solde--
     solde += 3; // -= *= /=
     solde = ((-solde + 40) * 3 / 2) % 1000;
     qDebug() << solde;
+
     // binary operator: shift << >>, xor ^, not ~, or |, and &
     quint8 newColor = (color >> 4); // color << 2
     quint8 inversedColor = ~newColor;
@@ -75,16 +87,21 @@ void playWithIntegers(){
              << inversedColor  // 11110000
              << (newColor | 16) // 00011111
              << (newColor & 22); // 00000110
+
     // TODO: Comparisons: <, <=, >, >=, ==, !=
+    qDebug();
 }
 
 void playWithReals() {
+    qDebug().noquote() << "** PLAY WITH REALS **";
+
     qreal temperature = 30.7;
     qreal bigDistance = 1E308;
     qreal verySmallData = -1.012E-308;
     qreal temperature2 = 1.37 * temperature;
     qreal x = 3.0;
     qreal y = 2.0;
+
     qDebug() << "Temperatures:"
              << temperature
              << temperature2
@@ -93,11 +110,14 @@ void playWithReals() {
              << bigDistance * 2
              << 0.0 / (x -y -1.0);
     qDebug() << "Small data:" << verySmallData;
+
     // TODO: Comparisons: <, <=, >, >=
     // WARNING: Comparison ==, != with caution => work with delta
+    qDebug();
 }
 
 void playWithQDates() {
+    qDebug().noquote() << "** PLAY WITH QDATE **";
     QDate aDate; // default constuctor
     QDate aDate2(2023, 7, 13);
     QDate aDate3(2023, 2, 29);
@@ -119,29 +139,31 @@ void playWithQDates() {
     qDebug() << "Precedence:" << (aDate4 < aDate5); // <=, >, >=, ==, !=
 
     // new overload of operator...
-//    QDate aDate6 = aDate5 + 4;
-//    qDebug() << aDate6;
-//    aDate6 += 2;
-//    qDebug() << aDate6;
+    QDate aDate6 = aDate5 + 4;
+    qDebug() << aDate6;
+    aDate6 += 2;
+    qDebug() << aDate6;
 }
 
 void playWithQVariant(){
+    qDebug().noquote() << "** PLAY WITH QVARIANT **";
     QVariant magicVar1 = 12;
     QVariant magicVar2 = QString("QT is Magic");
     QList<QVariant> variants;
     variants << magicVar1 << magicVar2 << QVariant();
 
     for (const QVariant& variant: variants) {
-        if (variant.convert<QString>()) {
+        if (variant.canConvert<QString>()) {
             QString realString = variant.toString();
             qDebug() << "I have a string:" << realString;
-        } else if (variant.convert<quint64>()) {
-            quint64 realNumber = variant.toLonglong();
-            qDebug() << "I've an integer": << realNumber
+        } else if (variant.canConvert<quint64>()) {
+            quint64 realNumber = variant.toLongLong();
+            qDebug() << "I've an integer:" << realNumber;
         } else {
-            qDebug() << "I don't know what contains my variant";
+            qDebug() << "I don't know what to do with this variant";
         }
     }
+    qDebug();
 }
 
 int main(int argc, char *argv[])
@@ -154,6 +176,7 @@ int main(int argc, char *argv[])
     playWithIntegers();
     playWithReals();
     playWithQDates();
+    playWithQVariant();
 //    return a.exec(); // no event or server
     return 0;
 }
