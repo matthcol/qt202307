@@ -6,6 +6,11 @@
 #include <QSet>
 #include <QtMath>
 #include <QDate>
+#include <QVariant>
+#include <iterator> // C++ standard iterator tools
+#include <vector> // C++ standard std::vector
+#include <algorithm> // C++ functional/iterator tools
+
 
 bool isNegative(qreal v){
     return v < 0.0;
@@ -91,11 +96,108 @@ void playWithContainersOfReals() {
         ++it;
     }
 
+    QSet<qreal> temperatureSet(
+        temperatures.cbegin(),
+        temperatures.cend()
+    );
+    qDebug() << temperatureSet;
+    temperatureSet << 22.3 << 22.4; // 22.3 is already there, not added
+    qDebug() << temperatureSet;
+
+    qDebug() << "Source list:" << temperatures;
+    QList<qreal> temperatureSlice1(
+        temperatures.cbegin() + 2,
+        temperatures.cbegin() + 5
+    );
+    qDebug() << "Slice(begin+2, begin+5):" << temperatureSlice1;
+    QList<qreal> temperatureSlice2(
+        temperatures.cbegin() + 2,
+        temperatures.cend() - 2
+    );
+    qDebug() << "Slice(begin+2, end-2):" <<  temperatureSlice2;
+
+    // NB: an iterator on QSet is not a LegacyRandomIterator
+    // or a LegacyBidirectionalIterator
+//    QList<qreal> temperatureSlice3(
+//        temperatureSet.cbegin() + 2,
+//        temperatureSet.cend() - 2
+//    );
+    QList<qreal> temperatureSlice3(
+        std::next(temperatureSet.cbegin(), 2),
+        std::next(temperatureSet.cbegin(), 5)
+    );
+    qDebug() << "Slice on a set:" <<  temperatureSlice3;
+
+    std::vector<qreal> temperatureVector(
+        temperatures.cbegin(),
+        temperatures.cend()
+    );
+    // NB: std::vector, std::list are registered in QT
+    // => qDebug, QVariant
+    qDebug() << temperatureVector;
+    QVariant variant = QVariant::fromValue(temperatureVector);
+    qDebug() << variant;
+
+    QList<qreal> temperatureReversed(
+        temperatureVector.crbegin(),
+        temperatureVector.crend()
+    );
+    qDebug() << temperatureReversed;
+    qDebug();
+}
+
+void playWithStringList() {
+    QList<QString> cityList {"Pau", "Bordeaux", "Toulouse"};
+    // 1. transfer into a QListString
+    QStringList cityStringList(cityList);
+    // 2. display with qDebug
+    qDebug() << cityStringList;
+    // 3. transform into a string with separator  '->'
+    qDebug() << cityStringList.join(" -> ");
+    // 4. add paris
+    cityStringList << "paris";
+    qDebug() << cityStringList;
+    // 5. sort cities (case insensitive)
+    cityList.sort();
+    qDebug() << cityStringList;
+    cityStringList.sort(Qt::CaseInsensitive);
+    qDebug() << cityStringList;
+    // misc
+    qDebug() << "PAU in the list: "
+             << cityStringList.contains("PAU", Qt::CaseInsensitive);
+    cityStringList << "Thau" << "Aubagne";
+    cityStringList.replaceInStrings("au", "o", Qt::CaseInsensitive);
+    qDebug() << cityStringList;
+    QStringList filteredList = cityStringList.filter("PO", Qt::CaseInsensitive);
+    qDebug() << filteredList;
+    qDebug();
+
+    // api algorithm of standard C++
+    // filter cities starting with T: copy_if, find_if
+    QStringList filteredListT;
+    std::copy_if(
+        cityStringList.cbegin(),
+        cityStringList.cend(),
+        std::back_inserter(filteredListT),
+        [](auto& city){ return city.startsWith('T');}
+    );
+    qDebug() << filteredList;
+    // transform all cities in upperCase: transform
+    QStringList citiesUppercase(cityStringList.size());
+    std::transform(
+        cityStringList.cbegin(),
+        cityStringList.cend(),
+        citiesUppercase.begin(),
+        [](auto & city){ return city.toUpper();}
+    );
+    qDebug() << citiesUppercase;
+    qDebug();
 }
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     playWithContainersOfReals();
+    playWithStringList();
     // return a.exec();
 }
