@@ -5,6 +5,7 @@
 #include <QVariant>
 
 #include "dateutils.h"
+#include "memutils.h"
 
 // links
 // primitives types: https://doc.qt.io/qt-6/qttypes.html
@@ -143,26 +144,76 @@ void playWithQDates() {
     qDebug() << aDate6;
     aDate6 += 2;
     qDebug() << aDate6;
+    qDebug();
 }
 
 void playWithQVariant(){
     qDebug().noquote() << "** PLAY WITH QVARIANT **";
-    QVariant magicVar1 = 12;
-    QVariant magicVar2 = QString("QT is Magic");
+    QVariant magicVar1 = 12; // constructor QVariant(int)
+    QVariant magicVar2 = QString("QT is Magic"); // constructor QVariant(QString)
+    QVariant magicVar3; // default constructor: invalid variant
+    magicVar3.setValue(12.5);
     QList<QVariant> variants;
-    variants << magicVar1 << magicVar2 << QVariant();
+    variants << magicVar1
+             << magicVar2
+             << magicVar3
+             << QVariant()
+             << QVariant::fromValue(QDate::currentDate()); // T = QDate
+    qDebug() << variants;
 
+    // C++ 11 "foreach"
     for (const QVariant& variant: variants) {
+        qDebug() << " - type id:"
+                 << variant.typeId()
+                 << "; type name:"
+                 << variant.typeName()
+                 << "; valid:"
+                 << variant.isValid();
+        if (variant.canConvert<quint64>()) {
+            quint64 realNumber = variant.toLongLong();
+            qDebug() << "I've an integer:" << realNumber;
+        }
         if (variant.canConvert<QString>()) {
             QString realString = variant.toString();
             qDebug() << "I have a string:" << realString;
-        } else if (variant.canConvert<quint64>()) {
-            quint64 realNumber = variant.toLongLong();
-            qDebug() << "I've an integer:" << realNumber;
-        } else {
-            qDebug() << "I don't know what to do with this variant";
+        }
+        if (variant.canConvert<QDate>()) {
+            QDate aDate = variant.value<QDate>();
+            qDebug() << "I have a date:" << aDate;
         }
     }
+    qDebug();
+}
+
+class NotCopyable {
+public:
+    NotCopyable()=default;
+    NotCopyable(const NotCopyable& other)=delete;
+    NotCopyable operator=(const NotCopyable& other)=delete;
+};
+
+void playWithTemplates(){
+    quint8 a = 12;
+    quint8 b = 107;
+    QDate d1(2023, 7, 14);
+    QDate d2(2021, 8, 15);
+
+    qDebug() << a << b;
+    swap(a, b); // instantiate template with T=quint8
+    qDebug() << a << b;
+    swap(a, b); // template is already instantiated with quint8
+    qDebug() << a << b;
+
+    qDebug() << d1 << d2;
+    swap(d1, d2); // instantiate template with T=QDate
+    qDebug() << d1 << d2;
+
+    NotCopyable nc1;
+    NotCopyable nc2;
+    // instantiate template with T=NotCopyable:
+    // Compilation error with copy constructor and operator
+    // swap(nc1,nc2);
+
     qDebug();
 }
 
@@ -177,6 +228,7 @@ int main(int argc, char *argv[])
     playWithReals();
     playWithQDates();
     playWithQVariant();
+    playWithTemplates();
 //    return a.exec(); // no event or server
     return 0;
 }
