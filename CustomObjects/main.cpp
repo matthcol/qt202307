@@ -3,6 +3,7 @@
 #include <QList>
 #include <QVariant>
 #include <QObject>
+#include <QThread>
 
 // include C++ standard
 #include <utility>
@@ -11,7 +12,7 @@
 #include "point2d.h"
 #include "point2dm.h"
 #include "point2do.h"
-#include "pointlogger.h""
+#include "pointlogger.h"
 
 void logNameChanged(QStringView name) {
     qDebug() << "logNameChanged:" << name;
@@ -162,13 +163,18 @@ void playConnectSignalSlotPointLogger() {
             pt,
             &Point2DO::pointChanged,
             &pointLogger,
-            &PointLogger::logPointChanged
+            qOverload<const Point2DO&>(&PointLogger::logPointChanged)
         );
     }
     ptA.setX(7.0);
+    QThread::sleep(2);
     ptB.setX(8.0);
+    QThread::sleep(2);
     ptA.setX(-7.0);
+    QThread::sleep(2);
     ptC.setY(9.0);
+
+    qDebug() << pointLogger.lastChangeSummary();
 }
 
 int main(int argc, char *argv[])
