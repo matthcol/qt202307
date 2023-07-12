@@ -144,7 +144,6 @@ void playConnectSignalSlot2points(){
     ptA.setX(5.5);
     ptA.setY(3.25);
     qDebug() << ptA << ptMirror;
-//    qDebug() << ptA.objectName() << ptMirror.objectName();
     qDebug();
 }
 
@@ -155,15 +154,25 @@ void playConnectSignalSlotPointLogger() {
     // 2. memorize timestamp of the last modification
     //      Map(name, timestamp)
     PointLogger pointLogger;
-    Point2DO ptA("A", 1.0, 3.0);
-    Point2DO ptB("B", 2.0, 2.0);
-    Point2DO ptC("C", 3.0, 1.0);
+    QObject parent;
+    Point2DO ptA("A", 1.0, 3.0, &parent);
+    Point2DO ptB("B", 2.0, 2.0, &parent);
+    Point2DO ptC("C", 3.0, 1.0, &parent);
+    qDebug() << ptA.objectName() << ptB.objectName() << ptC.objectName();
+    ptA.setObjectName("A");
+    ptB.setObjectName("B");
+    ptC.setObjectName("C");
+    qDebug() << ptA.objectName() << ptB.objectName() << ptC.objectName();
+    Point2DO* point = parent.findChild<Point2DO*>("A"); // nullptr if not found
+    qDebug() << "Child point found:" << *point;
+
     for (const Point2DO* pt: QList({&ptA, &ptB, &ptC})) {
         QObject::connect(
             pt,
             &Point2DO::pointChanged,
             &pointLogger,
             qOverload<const Point2DO&>(&PointLogger::logPointChanged)
+//            &PointLogger::logPointChanged // don't kown which overload to choose
         );
     }
     ptA.setX(7.0);

@@ -14,8 +14,7 @@ private:
     qreal m_x;
     qreal m_y;
 public:
-    Point2DO() = default;
-    Point2DO(const QString& name, qreal x=0.0, qreal y=0.0);
+    Point2DO(const QString& name=QString(), qreal x=0.0, qreal y=0.0, QObject* parent=nullptr);
     // gifts constructor by move
     // gifts operator move
     // copy constructor/operator are deleted
@@ -29,6 +28,7 @@ public slots:
     void setName(const QString& name);
     void setX(qreal x);
     void setY(qreal y);
+
 private slots:
     void attributeChanged();
 

@@ -1,9 +1,11 @@
 #include "point2do.h"
 
+// Example of partial constructor calling all args constructor
+//Point2DO::Point2DO(const QString& name):
+//    Point2DO(name, 0.0, 0.0, nullptr) {}
 
-
-Point2DO::Point2DO(const QString& name, qreal x, qreal y):
-    m_name(name), m_x(x), m_y(y)
+Point2DO::Point2DO(const QString& name, qreal x, qreal y, QObject* parent):
+    QObject(parent), m_name(name), m_x(x), m_y(y)
 {
     QObject::connect(this, &Point2DO::xChanged, this, &Point2DO::attributeChanged);
     QObject::connect(this, &Point2DO::yChanged, this, &Point2DO::attributeChanged);

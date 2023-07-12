@@ -11,14 +11,15 @@ PointLogger::PointLogger(QObject* parent):
 PointLogger::~PointLogger(){}
 
 QString PointLogger::lastChangeSummary() const {
-    auto first = m_lastChangeMap.constKeyValueBegin();
+    auto first = m_lastChangeMap.constKeyValueBegin(); // iter std::pair
     auto last = m_lastChangeMap.constKeyValueEnd();
     QStringList outputs;
     std::transform(
         first,
         last,
         std::back_inserter(outputs),
-        [](const auto& keyValue){
+        // [](const std::pair<QString, QDateTime>& keyValue) -> QString {
+        [](const auto& keyValue) {
             return QString("%1=%2")
                 .arg(keyValue.first)
                 .arg(keyValue.second.toString("yyyy-MM-ddThh:mm:ss.z"));
