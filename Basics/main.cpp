@@ -144,6 +144,14 @@ void playWithQDates() {
     qDebug() << aDate6;
     aDate6 += 2;
     qDebug() << aDate6;
+
+    // valid or invalid dates
+    bool ok1 = QDate::isValid(2023,2,29);
+    QDate invDate(2023,2,29);
+    bool ok2 = invDate.isValid();
+    qDebug() << "Valid dates:" << ok1 << ok2;
+
+    // TODO: display all leap years: QDate::isLeapYear
     qDebug();
 }
 
