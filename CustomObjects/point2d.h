@@ -2,6 +2,7 @@
 #define POINT2D_H
 
 #include <QString>
+#include <QDebug>
 
 class Point2D
 {
@@ -22,6 +23,11 @@ public:
     void setX(qreal x);
     qreal y() const;
     void setY(qreal y);
+
+    // Point2D operator+(const Point2D& other) const; // this + other
 };
+
+// qDebug() << pt
+QDebug operator<<(QDebug out, const Point2D& point);
 
 #endif // POINT2D_H

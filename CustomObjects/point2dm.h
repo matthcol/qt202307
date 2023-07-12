@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QMetaType>
+#include <QDebug>
 
 class Point2DM
 {
@@ -24,6 +25,8 @@ public:
     qreal y() const;
     void setY(qreal y);
 };
+
+QDebug operator<<(QDebug out, const Point2DM& point);
 
 Q_DECLARE_METATYPE(Point2DM)
 

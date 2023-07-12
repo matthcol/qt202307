@@ -35,3 +35,14 @@ qreal Point2D::y() const {
 void Point2D::setY(qreal y) {
     m_y = y;
 }
+
+QDebug operator<<(QDebug out, const Point2D& point){
+    QDebugStateSaver saver(out);
+    return out.nospace() << "Point2D("
+                << point.name()
+                << " ; x="
+                << point.x()
+                << " ; y="
+                << point.y()
+                << ")";
+}

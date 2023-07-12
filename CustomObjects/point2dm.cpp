@@ -35,3 +35,14 @@ qreal Point2DM::y() const {
 void Point2DM::setY(qreal y) {
     m_y = y;
 }
+
+QDebug operator<<(QDebug out, const Point2DM& point){
+    QDebugStateSaver saver(out);
+    return out.nospace() << "Point2DM("
+                         << point.name()
+                         << " ; x="
+                         << point.x()
+                         << " ; y="
+                         << point.y()
+                         << ")";
+}

@@ -9,7 +9,9 @@ CONFIG += c++17 cmdline
 SOURCES += \
         main.cpp \
         point2dm.cpp \
-        point2d.cpp
+        point2d.cpp \
+        point2do.cpp \
+        pointlogger.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -18,4 +20,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     point2dm.h \
-    point2d.h
+    point2d.h \
+    point2do.h \
+    pointlogger.h
