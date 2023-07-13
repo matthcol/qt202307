@@ -75,6 +75,8 @@ void playSplitComputation(){
 class MyError{};
 
 void playWithQtConcurrent() {
+    // Documentation of Map/Filter/Reduce
+    // https://doc.qt.io/qt-6/qtconcurrentmap.html
     qsizetype size = 1000000;
     QList<qreal> data = QList<qreal>(size);
     for (qsizetype i=0; i<size; i++) (data)[i] = i;
@@ -108,7 +110,8 @@ void playWithQtConcurrent() {
         data.end(),
         [](const qreal& x){ return x*x; },
         [](qreal& acc, const qreal& x){ acc += x; }
-//        std::plus<qreal>() // (x1,x2) => x1+x2
+        //    OK:  acc += x
+        //    NOK: std::plus<qreal>() // (x1,x2) => x1+x2
     );
     qDebug() << "Square sum: " << result;
     QFuture<qreal> futureResult = QtConcurrent::mappedReduced(
