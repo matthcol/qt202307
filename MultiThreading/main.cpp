@@ -137,7 +137,7 @@ void playWithQtConcurrent() {
         });
 }
 
-// See also: filteredReduce, QFutureWatcher
+// See also: filteredReduce, QFutureWatcher, QPromise
 
 int main(int argc, char *argv[])
 {
