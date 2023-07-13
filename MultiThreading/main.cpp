@@ -72,46 +72,69 @@ void playSplitComputation(){
 
 // TODO: same example with a Runnable with signal
 
+class MyError{};
+
 void playWithQtConcurrent() {
     qsizetype size = 1000000;
-    QList<qreal>* data = new QList<qreal>(size);
-    for (qsizetype i=0; i<size; i++) (*data)[i] = i;
+    QList<qreal> data = QList<qreal>(size);
+    for (qsizetype i=0; i<size; i++) (data)[i] = i;
+
+    // NB: map function (in place) must have following signature
+    // U function(T &t);
+    // PS: return value is not used (might be void)
     QtConcurrent::blockingMap(
-        data->begin(),
-        data->end(),
-        [](qreal x){ return 2.0*x; });
+        data.begin(),
+        data.end(),
+        [](qreal& x){ x = 2.0*x; });
     qDebug() << "Data (*2):"
-             << data->sliced(0,5)
-             << data->sliced(size-5,5);
+             << data.sliced(0,5)
+             << data.sliced(size-5,5);
+
+    // NB: mapped function must have following signature
+    // U function(const T &t);
     QList<qreal> results = QtConcurrent::blockingMapped<QList<qreal>>(
-        data->begin(),
-        data->end(),
-        [](qreal x){ return x+0.5; });
+        data.begin(),
+        data.end(),
+        [](const qreal& x){ return x+0.5; });
     qDebug() << "Data (+0.5):"
              << results.sliced(0,5)
              << results.sliced(size-5,5);
+
+    // NB: reduce function must have following signature
+    // V function(T &result, const U &intermediate)
+    // PS: V is not used (might be void)
     qreal result = QtConcurrent::blockingMappedReduced(
-        data->begin(),
-        data->end(),
-        [](qreal x){ return x*x; },
-        std::plus<qreal>() // (x1,x2) => x1+x2
+        data.begin(),
+        data.end(),
+        [](const qreal& x){ return x*x; },
+        [](qreal& acc, const qreal& x){ acc += x; }
+//        std::plus<qreal>() // (x1,x2) => x1+x2
     );
     qDebug() << "Square sum: " << result;
     QFuture<qreal> futureResult = QtConcurrent::mappedReduced(
-        data->begin(),
-        data->end(),
-        [](qreal x){ return x*x; },
-        std::plus<qreal>(), // (x1,x2) => x1+x2
-        999.99
+        data.begin(),
+        data.end(),
+        [](const qreal& x){ return x*x; },
+        [](qreal& acc, const qreal& x){ acc += x; }
+        , 999.99 // init value
         );
 //    qreal result2 = futureResult.result();
 //    qDebug() << "Square sum: " << result2;
     futureResult
-        .then([](qreal x) { qDebug() << "Result is finally here:" << x;})
-//        .onCanceled()
-//        .onFailed();
-        ;
+        .then([](qreal x) {
+            qDebug() << "Result is finally here:" << x;
+        }).onCanceled([] {
+            qDebug() << "Computation has been canceled";
+        }).onFailed([](const MyError &e) {
+           // Handle exceptions of type Error
+           qDebug() << "Computation has failed (1)";
+        }).onFailed([] {
+            // Handle all other types of errors
+            qDebug() << "Computation has failed (2)";
+        });
 }
+
+// See also: filteredReduce, QFutureWatcher
 
 int main(int argc, char *argv[])
 {
