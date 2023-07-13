@@ -6,4 +6,4 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES +=  tst_test_my_function.cpp
+SOURCES +=  tst_testmyfunctions.cpp
