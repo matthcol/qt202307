@@ -7,3 +7,10 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES +=  tst_testmyfunctions.cpp
+
+include(../MyApplication/geometry.pri)
+
+# NB: message to debug .pro
+#message("INCLUDEPATH: $$INCLUDEPATH")
+#message("PWD: $$PWD")
+

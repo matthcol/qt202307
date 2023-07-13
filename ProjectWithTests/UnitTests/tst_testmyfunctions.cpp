@@ -3,6 +3,8 @@
 #include <QDebug>
 
 // add necessary includes here
+#include "../MyApplication/geometry.h"
+//#include "geometry.h" // TODO: simplify with INCLUDEPATH
 
 //https://doc.qt.io/qt-6/qtest-overview.html
 
@@ -26,6 +28,7 @@ private slots:
     void test_case1();
     void test_case2();
     void test_case3();
+    void test_triangle_area();
 };
 
 void TestMyFunctions::initTestCase()
@@ -51,6 +54,14 @@ void TestMyFunctions::test_case2()
 void TestMyFunctions::test_case3()
 {
     QCOMPARE_EQ(0.3, 3*0.1);
+}
+
+void TestMyFunctions::test_triangle_area(){
+    qreal a = 4.0;
+    qreal b = 5.0;
+    qreal c = 3.0;
+    qreal area = triangle_area(a, b, c);
+    QCOMPARE_EQ(6.0, area);
 }
 
 QTEST_MAIN(TestMyFunctions)
