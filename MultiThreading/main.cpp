@@ -129,12 +129,13 @@ void playWithQtConcurrent() {
         }).onCanceled([] {
             qDebug() << "Computation has been canceled";
         }).onFailed([](const MyError &e) {
-           // Handle exceptions of type Error
+           // Handle exceptions of type MyError
            qDebug() << "Computation has failed (1)";
         }).onFailed([] {
             // Handle all other types of errors
             qDebug() << "Computation has failed (2)";
         });
+    QThreadPool::globalInstance()->waitForDone();
 }
 
 // See also: filteredReduce, QFutureWatcher, QPromise
